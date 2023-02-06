@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace TextEditor
 {
@@ -34,7 +35,21 @@ namespace TextEditor
                     break;
             }
 
-            static void Abrir() { }
+            static void Abrir()
+            {
+                Console.Clear();
+                Console.WriteLine("Qual o caminho do arquivo?");
+                string path = Console.ReadLine();
+
+                using (var file = new StreamReader(path))    // using vai se encarregar de abrir o arquivo que será lido e fechar automaticamente depois. O método StreamWriter pede o caminho que o arquivo será salvo, no nosso caso, será o path.
+                {
+                    string text = file.ReadToEnd();     // nessa linha o arquivo será lido até o final e será atribuído a variável text.
+                    Console.WriteLine(text);
+                }
+                Console.WriteLine();
+                Console.ReadLine();
+                Menu();
+            }
 
             static void Editar()
             {
@@ -43,10 +58,29 @@ namespace TextEditor
                 Console.WriteLine("------------------------");
                 string text = "";
 
-                while (Console.ReadKey().Key != ConsoleKey.Escape)   // o laço de repetição repete até que a tecla ESC seja apertada
+                do
                 {
-
+                    text += Console.ReadLine();
+                    text += Environment.NewLine;    // estou quebrando a linha no final de cada leitura
                 }
+                while (Console.ReadKey().Key != ConsoleKey.Escape);   // o laço de repetição repete até que a tecla ESC seja apertada
+
+                Salvar(text);
+            }
+
+            static void Salvar(string text)
+            {
+                Console.Clear();
+                Console.WriteLine("Qual o caminho para salvar o arquivo? ");
+                var path = Console.ReadLine();
+
+                using (var file = new StreamWriter(path))    // using vai se encarregar de abrir o arquivo que será escrito e fechar automaticamente depois. O método StreamWriter pede o caminho que o arquivo será salvo, no nosso caso, será o path.
+                {
+                    file.Write(text);   // nessa linha, a variavel file recebe o que foi armazenado na string text, ou seja, é aqui que o arquivo é escrito de verdade.
+                }
+                Console.WriteLine($"Arquivo {path} salvo com sucesso!");
+                Console.ReadLine();
+                Menu();
             }
         }
     }
